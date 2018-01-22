@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Filters from './Filters';
 import PuppiesList from './PuppiesList';
 import './App.css';
 
@@ -7,19 +8,51 @@ class App extends Component {
     super();
 
     this.state = {
-      puppies: []
+      puppies: [],
+      filteredPuppies: [],
+      currentFilter: 'ALL'
     };
   }
 
   componentDidMount = () =>
     fetch(`/puppies`)
       .then(res => res.json())
-      .then(res => this.setState(() => ({ puppies: res.slice(0) })));
+      .then(res =>
+        this.setState(() => ({
+          puppies: res.slice(0),
+          filteredPuppies: res.slice(0)
+        }))
+      );
+
+  _onChangeFilterHandler = e => {
+    const newFilter = e.target.value;
+    let filteredPuppies = [];
+
+    switch (newFilter) {
+      case 'ALL':
+        filteredPuppies = this.state.puppies.slice(0);
+        break;
+      case 'ADOPTED':
+        filteredPuppies = this.state.puppies.filter(puppy => puppy.adopted);
+        break;
+      case 'NOT_ADOPTED':
+        filteredPuppies = this.state.puppies.filter(puppy => !puppy.adopted);
+        break;
+      default:
+        filteredPuppies = this.state.puppies.slice(0);
+        break;
+    }
+
+    this.setState(() => ({
+      filteredPuppies,
+      currentFilter: newFilter
+    }));
+  };
 
   _constructPuppiesList = () => (
     <PuppiesList
       onClickAdoptHandler={this._onClickAdoptHandler}
-      puppies={this.state.puppies}
+      puppies={this.state.filteredPuppies}
     />
   );
 
@@ -37,7 +70,12 @@ class App extends Component {
     })
       .then(() => fetch(`/puppies`))
       .then(res => res.json())
-      .then(res => this.setState(() => ({ puppies: res.slice(0) })));
+      .then(res =>
+        this.setState(() => ({
+          puppies: res.slice(0),
+          filteredPuppies: res.slice(0)
+        }))
+      );
   };
 
   render() {
@@ -50,6 +88,10 @@ class App extends Component {
         <header className="puppies-app__header u-fx u-fx-align-center u-fx-justify-center u-mb-double">
           <h2>Puppy Adoption FTW</h2>
         </header>
+        <Filters
+          currentFilter={this.state.currentFilter}
+          onChangeFilterHandler={this._onChangeFilterHandler}
+        />
         <ul className="puppies-list u-fx u-fx-space-between">
           {this._constructPuppiesList()}
         </ul>
