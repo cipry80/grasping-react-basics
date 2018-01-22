@@ -1,6 +1,6 @@
 # grasping-react-basics
 
-Repo for [KRAK3N's](https://krak3n.co) Grasping React Basics training.
+Repo for [KRAK3N](https://krak3n.co)'s Grasping React Basics training.
 
 ## Instructions to spin up client
 
