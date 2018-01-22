@@ -52,6 +52,7 @@ class App extends Component {
   _constructPuppiesList = () => (
     <PuppiesList
       onClickAdoptHandler={this._onClickAdoptHandler}
+      onClickDeleteHandler={this._onClickDeleteHandler}
       puppies={this.state.filteredPuppies}
     />
   );
@@ -68,6 +69,18 @@ class App extends Component {
       },
       body: JSON.stringify(puppy)
     })
+      .then(() => fetch(`/puppies`))
+      .then(res => res.json())
+      .then(res =>
+        this.setState(() => ({
+          puppies: res.slice(0),
+          filteredPuppies: res.slice(0)
+        }))
+      );
+  };
+
+  _onClickDeleteHandler = puppyId => {
+    fetch(`/puppies/${puppyId}`, { method: 'DELETE' })
       .then(() => fetch(`/puppies`))
       .then(res => res.json())
       .then(res =>
