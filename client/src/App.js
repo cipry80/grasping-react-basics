@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Filters from './Filters';
+import PuppyAddForm from './PuppyAddForm';
 import PuppiesList from './PuppiesList';
 import './App.css';
 
@@ -8,6 +9,7 @@ class App extends Component {
     super();
 
     this.state = {
+      isInAddMode: false,
       puppies: [],
       filteredPuppies: [],
       currentFilter: 'ALL'
@@ -57,6 +59,32 @@ class App extends Component {
     />
   );
 
+  _onClickAddHandler = () =>
+    this.setState(prevState => ({
+      ...prevState,
+      isInAddMode: !prevState.isInAddMode
+    }));
+
+  _onClickSaveHandler = puppy => {
+    fetch(`/puppies`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(puppy)
+    })
+      .then(() => fetch(`/puppies`))
+      .then(res => res.json())
+      .then(res =>
+        this.setState(() => ({
+          puppies: res.slice(0),
+          filteredPuppies: res.slice(0),
+          isInAddMode: false
+        }))
+      );
+  };
+
   _onClickAdoptHandler = puppyId => {
     const puppy = this.state.puppies.find(puppy => puppy.id === puppyId);
     puppy.adopted = !puppy.adopted;
@@ -101,10 +129,22 @@ class App extends Component {
         <header className="puppies-app__header u-fx u-fx-align-center u-fx-justify-center u-mb-double">
           <h2>Puppy Adoption FTW</h2>
         </header>
-        <Filters
-          currentFilter={this.state.currentFilter}
-          onChangeFilterHandler={this._onChangeFilterHandler}
-        />
+        <div className="u-fx u-fx-align-center u-fx-justify-center  u-mb-double">
+          <Filters
+            currentFilter={this.state.currentFilter}
+            onChangeFilterHandler={this._onChangeFilterHandler}
+          />
+          <span className="u-mh-double">OR</span>
+          <button
+            className="puppy-add-btn u-pa-half"
+            onClick={this._onClickAddHandler}
+          >
+            Toggle add puppy form
+          </button>
+        </div>
+        {this.state.isInAddMode ? (
+          <PuppyAddForm onClickSaveHandler={this._onClickSaveHandler} />
+        ) : null}
         <ul className="puppies-list u-fx u-fx-space-between">
           {this._constructPuppiesList()}
         </ul>

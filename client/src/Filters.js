@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Filters = ({ currentFilter, onChangeFilterHandler }) => (
-  <div className="filters u-fx u-fx-justify-center u-mb-double">
+  <div className="filters">
     <span className="u-mr-half">Change filters:</span>
     <select onChange={onChangeFilterHandler} value={currentFilter}>
       <option value="ALL">All</option>
