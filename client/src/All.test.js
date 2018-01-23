@@ -8,22 +8,23 @@ import PuppiesList from './PuppiesList';
 import Puppy from './Puppy';
 
 describe('All tests', () => {
-  beforeEach(function() {
-    window.fetch = jest.fn().mockImplementation(() =>
-      Promise.resolve({
-        json: () => Promise.resolve([])
-      })
-    );
-  });
+  describe('App component related tests', () => {
+    beforeEach(function() {
+      window.fetch = jest.fn().mockImplementation(() =>
+        Promise.resolve({
+          json: () => Promise.resolve([])
+        })
+      );
+    });
+    it('Renders without crashing', () => {
+      const div = document.createElement('div');
 
-  it('Renders without crashing', () => {
-    const div = document.createElement('div');
+      ReactDOM.render(<App />, div);
+    });
 
-    ReactDOM.render(<App />, div);
-  });
-
-  it('Renders App without crashing', () => {
-    shallow(<App />);
+    it('Renders App without crashing', () => {
+      shallow(<App />);
+    });
   });
 
   it('Renders Filters without crashing', () => {
