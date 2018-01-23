@@ -16,6 +16,7 @@ describe('All tests', () => {
         })
       );
     });
+
     it('Renders without crashing', () => {
       const div = document.createElement('div');
 
