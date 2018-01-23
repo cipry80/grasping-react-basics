@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 class PuppyAddForm extends Component {
   constructor() {
@@ -54,5 +55,9 @@ class PuppyAddForm extends Component {
     </div>
   );
 }
+
+PuppyAddForm.propTypes = {
+  onClickSaveHandler: PropTypes.func.isRequired
+};
 
 export default PuppyAddForm;

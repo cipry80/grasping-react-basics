@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const Filters = ({ currentFilter, onChangeFilterHandler }) => (
   <div className="filters">
@@ -10,5 +11,10 @@ const Filters = ({ currentFilter, onChangeFilterHandler }) => (
     </select>
   </div>
 );
+
+Filters.propTypes = {
+  currentFilter: PropTypes.oneOf(['ALL', 'ADOPTED', 'NOT_ADOPTED']),
+  onChangeFilterHandler: PropTypes.func.isRequired
+};
 
 export default Filters;

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const Puppy = ({
   id,
@@ -32,5 +33,14 @@ const Puppy = ({
     </div>
   </li>
 );
+
+Puppy.propTypes = {
+  id: PropTypes.number.isRequired,
+  name: PropTypes.string,
+  type: PropTypes.string,
+  adopted: PropTypes.bool,
+  onClickAdoptHandler: PropTypes.func.isRequired,
+  onClickDeleteHandler: PropTypes.func.isRequired
+};
 
 export default Puppy;
