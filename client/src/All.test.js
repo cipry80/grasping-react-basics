@@ -26,6 +26,40 @@ describe('All tests', () => {
     it('Renders App without crashing', () => {
       shallow(<App />);
     });
+
+    it('Changes state effectively as server response comes back', done => {
+      // Overwriting with custom response
+      window.fetch = jest.fn().mockImplementation(() =>
+        Promise.resolve({
+          json: () =>
+            Promise.resolve([
+              {
+                id: 1,
+                name: 'Beast',
+                type: 'Terrier'
+              }
+            ])
+        })
+      );
+
+      const app = mount(<App />);
+
+      expect(app.state().puppies).toEqual([]);
+      window
+        .fetch()
+        .then(res => res.json())
+        .then(res => {
+          app.update();
+          expect(app.state().puppies).toEqual([
+            {
+              id: 1,
+              name: 'Beast',
+              type: 'Terrier'
+            }
+          ]);
+          done();
+        });
+    });
   });
 
   it('Renders Filters without crashing', () => {
