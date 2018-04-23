@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import App from './App';
 import Filters from './Filters';
 import PuppyAddForm from './PuppyAddForm';
@@ -9,7 +9,7 @@ import Puppy from './Puppy';
 
 describe('All tests', () => {
   describe('App component related tests', () => {
-    beforeEach(function() {
+    beforeEach(() => {
       window.fetch = jest.fn().mockImplementation(() =>
         Promise.resolve({
           json: () => Promise.resolve([])
@@ -53,16 +53,66 @@ describe('All tests', () => {
     shallow(<PuppiesList {...props} />);
   });
 
-  it('Renders Puppy without crashing', () => {
-    const props = {
-      id: 1,
-      name: '',
-      type: '',
-      adopted: true,
-      onClickAdoptHandler: () => {},
-      onClickDeleteHandler: () => {}
+  describe('Puppy component test suite', () => {
+    let props;
+    let mountedPuppy;
+    const puppy = () => {
+      if (!mountedPuppy) {
+        mountedPuppy = mount(<Puppy {...props} />);
+      }
+      return mountedPuppy;
     };
 
-    shallow(<Puppy {...props} />);
+    beforeEach(() => {
+      props = {
+        id: 1,
+        onClickAdoptHandler: jest.fn(),
+        onClickDeleteHandler: jest.fn()
+      };
+      mountedPuppy = undefined;
+    });
+
+    it('Renders Puppy without crashing', () => {
+      shallow(<Puppy {...props} />);
+    });
+
+    it('Renders correctly when passed in prop `adopted` is true', () => {
+      props = Object.assign({}, props, {
+        name: 'Beast',
+        type: 'Chihuahua',
+        adopted: true
+      });
+
+      const paragraphs = puppy()
+        .find('div')
+        .first()
+        .props().children;
+
+      expect(paragraphs[0].props.children.join('')).toEqual('Name: Beast');
+      expect(paragraphs[1].props.children.join('')).toEqual('Type: Chihuahua');
+      expect(paragraphs[2].props.children.join('')).toEqual('Adopted: True');
+
+      const btn = puppy()
+        .find('div')
+        .last()
+        .find('button')
+        .first()
+        .props();
+
+      expect(btn.className.indexOf('adopted')).not.toBe(-1);
+      expect(btn.children).toEqual('Cancel Adoption');
+    });
+
+    it('Correctly calls `onClickAdoptHandler` from `prop` when clicking the `Adopt/Cancel Adoption` button', () => {
+      const btn = puppy()
+        .find('div')
+        .last()
+        .find('button')
+        .first();
+
+      expect(props.onClickAdoptHandler).not.toHaveBeenCalled();
+      btn.simulate('click');
+      expect(props.onClickAdoptHandler).toHaveBeenCalledTimes(1);
+    });
   });
 });
